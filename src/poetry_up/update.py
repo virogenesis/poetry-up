@@ -2,10 +2,11 @@
 from dataclasses import dataclass
 from typing import Tuple
 
+import changelogs
 import click
 
 from . import git, github, poetry
-
+from .const import DescriptionHandlerChoices
 
 program_name = "poetry-up"
 
@@ -20,6 +21,7 @@ class Options:
     push: bool
     merge_request: bool
     pull_request: bool
+    package_description_handler: str
     upstream: str
     remote: str
     dry_run: bool
@@ -189,9 +191,27 @@ class PackageUpdater:
         self.title = (
             f"Bump {package.name} from {package.old_version} to {package.new_version}"
         )
-        self.description = self.title
 
         self.actions = Actions.create(self)
+
+    @property
+    def description(self):
+        if (
+            self.options.package_description_handler
+            == DescriptionHandlerChoices.CHANGELOGS.value
+        ):
+            result = ""
+            logs = changelogs.get(self.package.name, vendor="pypi")
+            for version, text in logs.items():
+                if version == self.package.old_version:
+                    break
+                result += f"## Version {version}\n\n{text}"
+            return result
+        elif (
+            self.options.package_description_handler
+            == DescriptionHandlerChoices.TITLE.value
+        ):
+            return self.title
 
     @property
     def required(self) -> bool:

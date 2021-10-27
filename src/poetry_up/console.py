@@ -1,10 +1,12 @@
 """Command-line interface."""
 import os
+from operator import attrgetter
 from typing import Tuple
 
 import click
 
 from . import __version__, update
+from .const import DescriptionHandlerChoices
 
 
 @click.command()  # noqa: C901
@@ -29,6 +31,14 @@ from . import __version__, update
 @click.option("--push/--no-push", help="Push the changes to remote.")
 @click.option("--merge-request/--no-merge-request", help="Open a merge request.")
 @click.option("--pull-request/--no-pull-request", help="Open a pull request.")
+@click.option(
+    "--package-description-handler",
+    type=click.Choice(
+        tuple(map(attrgetter("value"), DescriptionHandlerChoices)), case_sensitive=False
+    ),
+    default=DescriptionHandlerChoices.TITLE.value,
+    help="Handler for Merge/Pull requests description",
+)
 @click.option(
     "-u",
     "--upstream",
@@ -62,6 +72,7 @@ def main(  # noqa: C901
     push: bool,
     merge_request: bool,
     pull_request: bool,
+    package_description_handler,
     upstream: str,
     remote: str,
     dry_run: bool,
@@ -79,6 +90,7 @@ def main(  # noqa: C901
         push,
         merge_request,
         pull_request,
+        package_description_handler,
         upstream,
         remote,
         dry_run,
