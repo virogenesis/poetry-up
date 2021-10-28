@@ -205,7 +205,8 @@ class PackageUpdater:
             for version, text in logs.items():
                 if version == self.package.old_version:
                     break
-                result += f"## Version {version}\n\n{text}"
+
+                result += f"Version {version}<p>" + text.replace("\n", "<br>") + "</p>"
             return result
         elif (
             self.options.package_description_handler
