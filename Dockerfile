@@ -34,8 +34,7 @@ RUN apt-get update \
         openssh-client \
         libffi-dev \
         git \
-        libpcre3 libpcre3-dev \
-    \
+        libpcre3 libpcre3-dev
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 
