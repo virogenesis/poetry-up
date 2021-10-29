@@ -1,4 +1,5 @@
 """Git wrapper."""
+import sys
 from dataclasses import dataclass
 import subprocess  # noqa: S404
 from typing import Iterable
@@ -6,9 +7,14 @@ from typing import Iterable
 
 def git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
     """Invoke git."""
-    return subprocess.run(  # noqa: S603, S607
-        ["git", *args], check=check, capture_output=True, text=True,
-    )
+    try:
+        return subprocess.run(  # noqa: S603, S607
+            ["git", *args], check=check, capture_output=True, text=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(e.stdout, file=sys.stderr)
+        print(e.stderr)
+        raise e
 
 
 def current_branch() -> str:
