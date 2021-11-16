@@ -102,7 +102,6 @@ def update(package: Package, lock: bool = False, latest: bool = False) -> None:
     if latest:
         with _Config() as config:
             config.update_constraint(package)
-
     subprocess.run(  # noqa: S603, S607
-        ["poetry", "update", *options, package.name], check=True, capture_output=True
+        ["poetry", "update", *options, package.name], check=True
     )
